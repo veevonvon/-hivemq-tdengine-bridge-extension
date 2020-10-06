@@ -32,7 +32,7 @@
 ## 注意事项
 - `application.properties`中的sql语句包含数据库前缀。restful连接方式必须包含数据库前缀。参考资料：[https://www.taosdata.com/cn/documentation/connector/#RESTful-Connector](https://www.taosdata.com/cn/documentation/connector/#RESTful-Connector)
 - jdbc的连接url包含连接数据库名称，需与sql语句设置的数据库前缀保持一致，sql语句也可不包含数据库前缀
-- 
+- 使用`mqttloader`测试时，无法识别消息正文，需要设置`app.setPayloadBase64=true`
 
 ## License
 - Apache License Version 2.0
