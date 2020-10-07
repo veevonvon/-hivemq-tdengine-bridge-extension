@@ -18,11 +18,11 @@ import java.util.regex.Pattern;
 
 public class Tdengine {
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(Tdengine.class);
-    private static Properties appProperties = null;
+    public static Properties appProperties = null;
     private static String createMetricsSql = "";
     private static String createTableSql = "";
     private static String InsertSql = "";
-    private static TdengineDriver driver = null;
+    public static TdengineDriver driver = null;
 
     public static void init(String appPath){
         try{
@@ -56,12 +56,12 @@ public class Tdengine {
         }
     }
 
-    public static void createMetricsTable(){
-        driver.executeSql(createMetricsSql);
+    public static int createMetricsTable(){
+        return driver.executeSql(createMetricsSql);
     }
-    public static void createTable(String clientId) {
+    public static int createTable(String clientId) {
         String tableSql = MessageFormat.format(createTableSql, fixTableName(clientId));
-        driver.executeSql(tableSql);
+        return driver.executeSql(tableSql);
     }
     public static MqttData buildMqttData(String clientId, long time, String topic, ByteBuffer payload, int qos) {
         String charsetStr = appProperties.getProperty("app.charset");
@@ -69,7 +69,7 @@ public class Tdengine {
         String payloadStr = charset.decode(payload).toString();
         return new MqttData(clientId, time, topic, payloadStr, qos);
     }
-    public static void insert(MqttData data) {
+    public static int insert(MqttData data) {
         String payload = filtString(data.getPayload());
         if(appProperties.getProperty("app.setPayloadBase64").equals("true")){
             payload = data.getPayloadBase64();
@@ -82,9 +82,8 @@ public class Tdengine {
                 data.getQos(),
                 filtString(data.getClientId())
         );
-        driver.executeSql(sql);
+        return driver.executeSql(sql);
     }
-
     private static String filtString(String str){
         return str.replace("'","''").replace("\\","\\\\");
     }

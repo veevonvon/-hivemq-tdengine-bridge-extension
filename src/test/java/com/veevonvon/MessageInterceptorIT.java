@@ -24,45 +24,51 @@ import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.testcontainer.core.MavenHiveMQExtensionSupplier;
 import com.hivemq.testcontainer.junit5.HiveMQTestContainerExtension;
+import com.veevonvon.tdengine.MqttData;
+import com.veevonvon.tdengine.Tdengine;
+import com.veevonvon.tdengine.driver.TdengineRestfulDriver;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * This tests the functionality of the {@link MessageInterceptor}.
- * It uses the HiveMQ Testcontainer to automatically package and deploy this extension inside a HiveMQ docker container.
+ * 测试发送信息。启动测试前，先运行mvn package（勾选RunWithHiveMQ）
  *
- * @author Yannick Weber
- * @since 4.3.1
+ * @author veevonvon
  */
 class MessageInterceptorIT {
-
-    @RegisterExtension
-    public final @NotNull HiveMQTestContainerExtension extension =
-            new HiveMQTestContainerExtension()
-                    .withExtension(MavenHiveMQExtensionSupplier.direct().get());
+    private static String HOST = "127.0.0.1";
+    private static Integer PORT = 1883;
 
     @Test
     @Timeout(value = 5, unit = TimeUnit.MINUTES)
-    void test_payload_modified() throws InterruptedException {
+    void testPublishMsg() {
         final Mqtt5BlockingClient client = Mqtt5Client.builder()
-                .identifier("hello-world-client")
-                .serverPort(extension.getMqttPort())
+                .identifier("testPublish")
+                .serverHost(HOST)
+                .serverPort(PORT)
                 .buildBlocking();
         client.connect();
 
         final Mqtt5BlockingClient.Mqtt5Publishes publishes = client.publishes(MqttGlobalPublishFilter.ALL);
-        client.subscribeWith().topicFilter("hello/world").send();
+        client.subscribeWith().topicFilter("testTopic").send();
+        String msg = "message for test" + new Date().getTime();
+        client.publishWith().topic("testTopic").payload(msg.getBytes(StandardCharsets.UTF_8)).send();
 
-        client.publishWith().topic("hello/world").payload("Good Bye World!".getBytes(StandardCharsets.UTF_8)).send();
-
-        final Mqtt5Publish receive = publishes.receive();
+        Mqtt5Publish receive = null;
+        try {
+            receive = publishes.receive();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         assertTrue(receive.getPayload().isPresent());
-        assertEquals("Hello World!", new String(receive.getPayloadAsBytes(), StandardCharsets.UTF_8));
+        assertEquals(msg, new String(receive.getPayloadAsBytes(), StandardCharsets.UTF_8));
     }
+
 }

@@ -45,6 +45,8 @@ public class ExtensionMain implements com.hivemq.extension.sdk.api.ExtensionMain
         try {
             Tdengine.init(extensionHomeFolder.getPath());
             Tdengine.createMetricsTable();
+            // RunWithHiveMQ时调试使用
+            //addAuth();
             addClientLifecycleEventListener();
             addPublishModifier();
             final ExtensionInformation extensionInformation = extensionStartInput.getExtensionInformation();
