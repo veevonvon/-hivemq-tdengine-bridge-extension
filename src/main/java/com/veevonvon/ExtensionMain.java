@@ -57,6 +57,7 @@ public class ExtensionMain implements com.hivemq.extension.sdk.api.ExtensionMain
     }
     @Override
     public void extensionStop(final @NotNull ExtensionStopInput extensionStopInput, final @NotNull ExtensionStopOutput extensionStopOutput) {
+        Tdengine.close();
         final ExtensionInformation extensionInformation = extensionStopInput.getExtensionInformation();
         LOGGER.info("Stopped " + extensionInformation.getName() + ":" + extensionInformation.getVersion());
     }

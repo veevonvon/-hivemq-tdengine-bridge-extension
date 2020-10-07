@@ -84,6 +84,9 @@ public class Tdengine {
         );
         return driver.executeSql(sql);
     }
+    public static void close(){
+        driver.close();
+    }
     private static String filtString(String str){
         return str.replace("'","''").replace("\\","\\\\");
     }

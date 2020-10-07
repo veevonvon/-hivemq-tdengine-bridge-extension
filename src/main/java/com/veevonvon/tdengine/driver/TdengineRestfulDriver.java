@@ -58,4 +58,5 @@ public class TdengineRestfulDriver implements TdengineDriver {
         }
         return res;
     }
+    public void close(){}
 }

@@ -63,4 +63,11 @@ public class TdengineJDBCDriver implements TdengineDriver {
         }
         return null;
     }
+    public void close(){
+        try {
+            dataSource.getConnection().close();
+        } catch (SQLException throwables) {
+            LOGGER.warn(throwables.getMessage());
+        }
+    }
 }
