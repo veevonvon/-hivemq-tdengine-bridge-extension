@@ -10,9 +10,9 @@
 #### 部署HiveMQ
 - 参考官方文档[https://www.hivemq.com/docs/hivemq/4.4/user-guide/introduction.html](https://www.hivemq.com/docs/hivemq/4.4/user-guide/introduction.html)
 #### 插件部署
-- 将插件的压缩包`tdengine-1.0-SNAPSHOT-distribution.zip`解压至`HiveMQ`的`extensions`目录
+- 将插件的压缩包`hivemq-tdengine-bridge-extension-1.0.0-distribution.zip`解压至`HiveMQ`的`extensions`目录
 - 修改`application.properties`的数据库连接信息，sql语句等
-- HiveMQ插件部署方法参考
+- HiveMQ插件部署方法参考 [https://www.hivemq.com/docs/hivemq/4.4/extensions/deployment.html](https://www.hivemq.com/docs/hivemq/4.4/extensions/deployment.html)
 #### 测试客户端连接
 - 例如使用客户端工具`MQTT X`连接`HiveMQ`，参考官方使用手册[https://mqttx.app/cn/docs/](https://mqttx.app/cn/docs/)
 - 发送消息后检查tdengine数据库数据，插件会新建超级表，根据每一个clientId创建表，publish消息会插入对应的表
@@ -32,7 +32,7 @@
 ## 注意事项
 - `application.properties`中的sql语句包含数据库前缀。restful连接方式必须包含数据库前缀。参考资料：[https://www.taosdata.com/cn/documentation/connector/#RESTful-Connector](https://www.taosdata.com/cn/documentation/connector/#RESTful-Connector)
 - jdbc的连接url包含连接数据库名称，需与sql语句设置的数据库前缀保持一致，sql语句也可不包含数据库前缀
-- 表名默认按照每个client单独一个表，如果不需要按照每个client单独一个表，sql语句的表名写死即可
+- 表名默认按照每个client单独一个表，如果不需要按照每个client单独一个表，sql语句的表名设置固定表名即可
 - 由于表名不能以数字开头，所以clientId不能以数字开头，建议以大小写字母开头，clientid设置表名时，会过滤特殊字符
 - 使用`mqttloader`测试时，无法识别消息正文，需要设置`app.setPayloadBase64=true`
 
